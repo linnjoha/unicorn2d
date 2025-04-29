@@ -1,3 +1,7 @@
+import { GameLoop } from "./src/GameLoop.js";
+import { gridCells } from "./src/helpers/grid.js";
+import { moveTowards } from "./src/helpers/moveTowards.js";
+import { DOWN, Input, LEFT, RIGHT, UP } from "./src/Input.js";
 import { resources } from "./src/Resource.js";
 import { Sprite } from "./src/Sprite.js";
 import { Vector2 } from "./src/Vector2.js";
@@ -21,8 +25,10 @@ const hero = new Sprite({
   frameSize: new Vector2(17, 17),
   hFrames: 4,
   vFrames: 1,
-  frame: 4,
+  frame: 1,
+  position: new Vector2(gridCells(6), gridCells(6)),
 });
+const heroDestinationPosition = hero.position.duplicate();
 
 // const hero = new Sprite({
 //   resource: resources.images.hero,
@@ -30,6 +36,7 @@ const hero = new Sprite({
 //   hFrames: 3,
 //   vFrames: 8,
 //   frame: 1,
+//position: new Vector2(gridCells(6), gridCells(6)),
 // });
 
 const rainbow = new Sprite({
@@ -39,16 +46,61 @@ const rainbow = new Sprite({
   vFrames: 1,
   scale: 0.15,
 });
+const shadow = new Sprite({
+  resource: resources.images.shadow,
+  frameSize: new Vector2(32, 32),
+});
 
-const heroPos = new Vector2(16 * 6, 16 * 6);
+//const heroPos = new Vector2(16 * 6, 16 * 6);
 const rainbowPos = new Vector2(16 * 8, 0);
+
+const input = new Input();
+
+const update = () => {
+  const distance = moveTowards(hero, heroDestinationPosition, 1);
+  const hasArrived = distance <= 1;
+  if (hasArrived) {
+    tryMove();
+  }
+};
+
+const tryMove = () => {
+  if (!input.direction) return;
+
+  let nextX = heroDestinationPosition.x;
+  let nextY = heroDestinationPosition.y;
+
+  const gridSize = 16;
+
+  if (input.direction === DOWN) {
+    nextY += gridSize;
+    //add new sprites
+  }
+  if (input.direction === UP) {
+    nextY -= gridSize;
+  }
+  if (input.direction === LEFT) {
+    nextX -= gridSize;
+  }
+  if (input.direction === RIGHT) {
+    nextX += gridSize;
+  }
+
+  //check if space is free to move
+  heroDestinationPosition.x = nextX;
+  heroDestinationPosition.y = nextY;
+};
+
 const draw = () => {
   skySprite.drawImage(ctx, 0, 0);
   groundSprite.drawImage(ctx, 0, 0);
-  hero.drawImage(ctx, heroPos.x, heroPos.y);
+  const heroOffset = new Vector2(-8, -21);
+  const heroPosX = hero.position.x + 10 + heroOffset.x;
+  const heroPosY = hero.position.y + 5 + heroOffset.y;
+
+  //shadow.drawImage(ctx, heroPosX ,  heroPosY);
+  hero.drawImage(ctx, heroPosX, heroPosY);
   rainbow.drawImage(ctx, rainbowPos.x, rainbowPos.y);
 };
-
-setInterval(() => {
-  draw();
-}, 300);
+const gameLoop = new GameLoop(update, draw);
+gameLoop.start();
