@@ -2,7 +2,7 @@ export class GameLoop {
   constructor(update, render) {
     this.lastFrameTime = 0;
     this.accumulatedTime = 0;
-    this.timeStep = 1000 / 4; //60 frames per sec
+    this.timeStep = 1000 / 60; //60 frames per sec
     this.update = update;
     this.render = render;
 
