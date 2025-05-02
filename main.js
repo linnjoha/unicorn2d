@@ -50,11 +50,10 @@ const rainbow = new Sprite({
 const shadow = new Sprite({
   resource: resources.images.shadow,
   frameSize: new Vector2(32, 32),
+  scale: 0.6,
 });
 
-//const heroPos = new Vector2(16 * 6, 16 * 6);
 const rainbowPos = new Vector2(16 * 8, 0);
-
 const input = new Input();
 
 const update = () => {
@@ -87,20 +86,16 @@ const tryMove = () => {
 
     if (hero.frame === 5) {
       hero.frame = 6;
-      shadow.scale = 1.15;
     } else if (hero.frame === 6) {
       hero.frame = 7;
-      shadow.scale = 1;
     } else hero.frame = 5;
   }
   if (input.direction === RIGHT) {
     nextX += gridSize;
     if (hero.frame === 1) {
       hero.frame = 1.5;
-      shadow.scale = 1.15;
     } else if (hero.frame === 1.5) {
       hero.frame = 2;
-      shadow.scale = 1;
     } else hero.frame = 1;
   }
   if (isSpaceFree(walls, nextX, nextY)) {
@@ -115,7 +110,7 @@ const draw = () => {
   const heroOffset = new Vector2(-8, -21);
   const heroPosX = hero.position.x + 10 + heroOffset.x;
   const heroPosY = hero.position.y + 5 + heroOffset.y;
-  // shadow.drawImage(ctx, heroPosX - 8.5, heroPosY - 8.5);
+  shadow.drawImage(ctx, heroPosX, heroPosY);
   hero.drawImage(ctx, heroPosX, heroPosY);
   rainbow.drawImage(ctx, rainbowPos.x, rainbowPos.y);
 };
