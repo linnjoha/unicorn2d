@@ -25,8 +25,8 @@ const hero = new Sprite({
   resource: resources.images.unicorn,
   frameSize: new Vector2(17, 17),
   hFrames: 4,
-  vFrames: 2,
-  frame: 1,
+  vFrames: 4,
+  frame: 0.6,
   position: new Vector2(gridCells(6), gridCells(6)),
 });
 
@@ -76,31 +76,33 @@ const tryMove = () => {
   if (input.direction === DOWN) {
     nextY += gridSize;
     //add new sprites
+    hero.frame = 12;
   }
   if (input.direction === UP) {
     nextY -= gridSize;
+    hero.frame = 8;
   }
   if (input.direction === LEFT) {
     nextX -= gridSize;
 
-    if (hero.frame === 4) {
-      hero.frame = 5;
-    } else if (hero.frame === 5) {
+    if (hero.frame === 5) {
       hero.frame = 6;
-    } else hero.frame = 4;
+      shadow.scale = 1.15;
+    } else if (hero.frame === 6) {
+      hero.frame = 7;
+      shadow.scale = 1;
+    } else hero.frame = 5;
   }
   if (input.direction === RIGHT) {
     nextX += gridSize;
-
     if (hero.frame === 1) {
+      hero.frame = 1.5;
+      shadow.scale = 1.15;
+    } else if (hero.frame === 1.5) {
       hero.frame = 2;
-    } else if (hero.frame === 2) {
-      hero.frame = 3;
+      shadow.scale = 1;
     } else hero.frame = 1;
   }
-
-  //check if space is free to move
-
   if (isSpaceFree(walls, nextX, nextY)) {
     heroDestinationPosition.x = nextX;
     heroDestinationPosition.y = nextY;
@@ -113,8 +115,7 @@ const draw = () => {
   const heroOffset = new Vector2(-8, -21);
   const heroPosX = hero.position.x + 10 + heroOffset.x;
   const heroPosY = hero.position.y + 5 + heroOffset.y;
-
-  //shadow.drawImage(ctx, heroPosX ,  heroPosY);
+  // shadow.drawImage(ctx, heroPosX - 8.5, heroPosY - 8.5);
   hero.drawImage(ctx, heroPosX, heroPosY);
   rainbow.drawImage(ctx, rainbowPos.x, rainbowPos.y);
 };
