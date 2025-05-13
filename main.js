@@ -1,4 +1,5 @@
 import { Animations } from "./src/Animations.js";
+import { events } from "./src/Events.js";
 import { FrameIndexPattern } from "./src/FrameIndexPattern.js";
 import { GameLoop } from "./src/GameLoop.js";
 import { GameObject } from "./src/GameObject.js";
@@ -48,6 +49,9 @@ const hero = new Hero(gridCells(6), gridCells(6));
 
 mainScene.input = new Input();
 
+events.on("HERO_POSITION", mainScene, (heroPosition) => {
+  console.log("Hero moved", heroPosition);
+});
 mainScene.addChild(skySprite);
 mainScene.addChild(groundSprite);
 mainScene.addChild(rainbow);

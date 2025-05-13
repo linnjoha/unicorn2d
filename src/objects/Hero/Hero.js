@@ -1,4 +1,5 @@
 import { Animations } from "../../Animations";
+import { events } from "../../Events";
 import { FrameIndexPattern } from "../../FrameIndexPattern";
 import { GameObject } from "../../GameObject";
 import { gridCells, isSpaceFree } from "../../helpers/grid";
@@ -63,6 +64,12 @@ export class Hero extends GameObject {
     if (hasArrived) {
       this.tryMove(root);
     }
+
+    this.tryEmitPosition();
+  }
+
+  tryEmitPosition() {
+    events.emit("HERO_POSITION", this.position);
   }
 
   tryMove(root) {
