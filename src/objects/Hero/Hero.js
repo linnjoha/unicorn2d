@@ -10,6 +10,7 @@ import { resources } from "../../Resource";
 import { Sprite } from "../../Sprite";
 import { Vector2 } from "../../Vector2";
 import {
+  PICK_UP_DOWN,
   STAND_DOWN,
   STAND_LEFT,
   STAND_RIGHT,
@@ -42,6 +43,7 @@ export class Hero extends GameObject {
       hFrames: 4,
       vFrames: 4,
       frame: 0,
+
       position: new Vector2(-4, -20),
       animations: new Animations({
         walkLeft: new FrameIndexPattern(WALK_LEFT),
@@ -52,13 +54,23 @@ export class Hero extends GameObject {
         standDown: new FrameIndexPattern(STAND_DOWN),
         standUp: new FrameIndexPattern(STAND_UP),
         standLeft: new FrameIndexPattern(STAND_LEFT),
+        pickUpDown: new FrameIndexPattern(PICK_UP_DOWN),
       }),
     });
     this.addChild(this.body);
     this.facingDirection = DOWN;
     this.destinationPosition = this.position.duplicate();
+    this.itemPickUpTime = 0;
+
+    events.on("HERO_PICKS_UP_ITEM", this, (data) => {
+      this.onPickUpItem(data);
+    });
   }
-  step(_delta, root) {
+  step(delta, root) {
+    if (this.itemPickUpTime > 0) {
+      this.workOnItemPickup(delta);
+      return;
+    }
     const distance = moveTowards(this, this.destinationPosition, 1);
     const hasArrived = distance <= 1;
     if (hasArrived) {
@@ -69,6 +81,12 @@ export class Hero extends GameObject {
   }
 
   tryEmitPosition() {
+    if (this.lastX === this.position.x && this.lastY === this.position.y) {
+      return;
+    }
+    this.lastX = this.position.x;
+    this.lastY = this.position.y;
+
     events.emit("HERO_POSITION", this.position);
   }
 
@@ -119,5 +137,15 @@ export class Hero extends GameObject {
       this.destinationPosition.x = nextX;
       this.destinationPosition.y = nextY;
     }
+  }
+  onPickUpItem({ image, position }) {
+    this.destinationPosition = position.duplicate();
+
+    this.itemPickUpTime = 1500;
+  }
+
+  workOnItemPickup(delta) {
+    this.itemPickUpTime -= delta;
+    this.body.animations.play("pickUpDown");
   }
 }

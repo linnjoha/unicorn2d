@@ -1,4 +1,5 @@
 import { Animations } from "./src/Animations.js";
+import { Camera } from "./src/camera.js";
 import { events } from "./src/Events.js";
 import { FrameIndexPattern } from "./src/FrameIndexPattern.js";
 import { GameLoop } from "./src/GameLoop.js";
@@ -18,6 +19,7 @@ import {
   WALK_RIGHT,
   WALK_UP,
 } from "./src/objects/Hero/heroAnimation.js";
+import { Rod } from "./src/objects/Rod/Rod.js";
 import { resources } from "./src/Resource.js";
 import { Sprite } from "./src/Sprite.js";
 import { Vector2 } from "./src/Vector2.js";
@@ -46,22 +48,27 @@ const rainbow = new Sprite({
   position: new Vector2(16 * 8, 0),
 });
 const hero = new Hero(gridCells(6), gridCells(6));
-
+const rod = new Rod(gridCells(7), gridCells(7));
 mainScene.input = new Input();
 
-events.on("HERO_POSITION", mainScene, (heroPosition) => {
-  console.log("Hero moved", heroPosition);
-});
-mainScene.addChild(skySprite);
+//mainScene.addChild(skySprite);
 mainScene.addChild(groundSprite);
 mainScene.addChild(rainbow);
 mainScene.addChild(hero);
+mainScene.addChild(rod);
+const camera = new Camera();
+mainScene.addChild(camera);
 const update = (delta) => {
   mainScene.stepEntry(delta, mainScene);
 };
 
 const draw = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  skySprite.drawImage(ctx, 0, 0);
+  ctx.save();
+  ctx.translate(camera.position.x, camera.position.y);
   mainScene.draw(ctx, 0, 0);
+  ctx.restore();
 };
 const gameLoop = new GameLoop(update, draw);
 gameLoop.start();

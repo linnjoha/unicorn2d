@@ -7,6 +7,7 @@ class Resources {
       unicorn: "/sprites/unicorn.png",
       rainbow: "/sprites/rainbow.png",
       shadow: "/sprites/shadow.png",
+      rod: "/sprites/watermelon.png",
     };
 
     this.images = {};
